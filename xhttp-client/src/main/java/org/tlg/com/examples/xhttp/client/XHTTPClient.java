@@ -25,7 +25,7 @@ public class XHTTPClient
         req.setUri("/test");
         HTTPResponse res = null;
         try {
-			res = xmppManager.sendRequest(req, "test-server@delling/t");
+			res = xmppManager.sendRequest(req, "test-server@your/yourresource");
 		} catch (XmppException e) {
 			System.out.println("An error occured!");
 			e.printStackTrace();

@@ -15,7 +15,7 @@ public class XHTTPServer
 {
     public static void main( String[] args )
     {
-    	XmppConnectionDetails conDetails = new XmppConnectionDetails("delling.dpt.cs.aau.dk", "test-server", "test", "t");
+    	XmppConnectionDetails conDetails = new XmppConnectionDetails("your.xmpp.server.com", "test-server", "yourpassword", "yourresource");
     	ResourceManager rm = new ResourceManager("org.tlg.com.examples.xhttp.server");
         XmppManager xmppManager = new XmppManager(conDetails, rm);
         try {

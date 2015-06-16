@@ -15,7 +15,7 @@ public class XHTTPClient
 {
     public static void main( String[] args )
     {
-    	XmppConnectionDetails conDetails = new XmppConnectionDetails("delling.dpt.cs.aau.dk", "test-client", "test", "t");
+    	XmppConnectionDetails conDetails = new XmppConnectionDetails("your.xmpp.server.com", "test-client", "yourpassword", "yourresource");
         XmppManager xmppManager = new XmppManager(conDetails, null);
         try {
 			xmppManager.init();

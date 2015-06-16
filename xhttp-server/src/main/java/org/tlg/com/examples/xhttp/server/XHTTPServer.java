@@ -7,10 +7,6 @@ import org.tlg.com.httpoverxmpp.api.ResourceManager;
 import org.tlg.com.httpoverxmpp.api.XmppConnectionDetails;
 import org.tlg.com.httpoverxmpp.api.XmppManager;
 
-/**
- * Hello world!
- *
- */
 public class XHTTPServer 
 {
     public static void main( String[] args )

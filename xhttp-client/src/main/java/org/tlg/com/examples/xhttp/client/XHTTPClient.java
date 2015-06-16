@@ -7,10 +7,6 @@ import org.tlg.com.httpoverxmpp.api.XmppConnectionDetails;
 import org.tlg.com.httpoverxmpp.api.XmppManager;
 import org.tlg.com.httpoverxmpp.exceptions.XmppException;
 
-/**
- * Hello world!
- *
- */
 public class XHTTPClient 
 {
     public static void main( String[] args )

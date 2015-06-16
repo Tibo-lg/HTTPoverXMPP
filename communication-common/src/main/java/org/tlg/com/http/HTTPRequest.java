@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.xerces.dom.ElementNSImpl;
+import org.tlg.com.api.Header;
+import org.tlg.com.api.MethodType;
 import org.tlg.com.utils.W3CHelper;
 
 @XmlRootElement(name="req")
@@ -69,10 +71,19 @@ public class HTTPRequest {
 	public void setMethod(String method) {
 		this.method = method;
 	}
+	
+	public MethodType getMethodType(){
+		for(int i=0; i<MethodType.values().length; i++){
+			if(this.method.equals(MethodType.values()[i].name())){
+				return MethodType.values()[i];
+			}
+		}
+		return null;
+	}
 
 	//	//@XmlElementWrapper(name="data")
 	//	@XmlElement(name="xml")
-	public Object getEntityNode() {
+	private Object getEntityNode() {
 		if (entity == null) {
 			return null;
 		}
@@ -87,6 +98,9 @@ public class HTTPRequest {
 	
 	@SuppressWarnings("unchecked")
 	public <T> T getEntity(Class<?> c) throws JAXBException {
+		if(c.equals(String.class)){
+			return (T) this.getEntity();
+		}
 		JAXBContext ctx = JAXBContext.newInstance(c);
 		Unmarshaller u = ctx.createUnmarshaller();
 		StringReader reader = new StringReader(this.entity);

@@ -36,6 +36,7 @@ public class IQHTTPReq extends IQ{
 	
 	@Override
 	public String getChildElementXML() {
+		// TODO Auto-generated method stub
 		String sReq = null;
 		try{
 			JAXBContext ctx = JAXBContext.newInstance(HTTPRequest.class);

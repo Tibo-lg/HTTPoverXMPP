@@ -7,7 +7,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>communication-xmpp</artifactId>
-	<name>ARROWHEAD::WP5::Communication XMPP</name>
+	<name>Communication XMPP</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.tlg.com</groupId>
@@ -23,6 +23,16 @@
 			<groupId>jivesoftware</groupId>
 			<artifactId>smackx</artifactId>
 			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.9-RC1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0.1</version>
 		</dependency>
 	</dependencies>
 </project>

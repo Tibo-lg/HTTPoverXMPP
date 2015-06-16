@@ -2,8 +2,8 @@ package org.tlg.com.httpoverxmpp.messages;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
+import org.tlg.com.api.Header;
 import org.tlg.com.http.HTTPResponse;
-import org.tlg.com.http.Header;
 import org.xmlpull.v1.XmlPullParser;
 
 public class IQHTTPResProvider implements IQProvider{

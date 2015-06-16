@@ -17,7 +17,6 @@ import org.tlg.com.httpoverxmpp.messages.IQHTTPReq;
 import org.tlg.com.httpoverxmpp.messages.IQHTTPReqProvider;
 import org.tlg.com.httpoverxmpp.messages.IQHTTPRes;
 import org.tlg.com.httpoverxmpp.messages.IQHTTPResProvider;
-import org.tlg.com.interfaces.RequestListener;
 
 /**
  * Object that enables sending and receiving HTTP requests, and answering to them
@@ -26,11 +25,11 @@ import org.tlg.com.interfaces.RequestListener;
  */
 public class XmppManager {
 
-	//private static final int packetReplyTimeout = 500; // millis
+	@SuppressWarnings("unused")
+	private static final int packetReplyTimeout = 500; // millis
 
 	private String server;
 	private String resource;
-	private RequestListener requestListener;
 	
 	/**
 	 * Concurrent hashmap to stored currently pending requests.
@@ -47,7 +46,8 @@ public class XmppManager {
 	 * Smack API class
 	 */
 	private XMPPConnection connection;
-
+	
+	private ResourceManager resourceManager;
 	private String username;
 	private String password;
 
@@ -59,12 +59,12 @@ public class XmppManager {
 	 * @param resource The name of the resource used for this connection (e.g. user@server/resource)
 	 * @param requestListener An object implementing the RequestListener interface that will be notified of incoming requests
 	 */
-	public XmppManager(String server, String username, String password, String resource, RequestListener requestListener) {
-		this.server = server;
-		this.username = username;
-		this.password = password;
-		this.resource = resource;
-		this.requestListener = requestListener;
+	public XmppManager(XmppConnectionDetails conDetails, ResourceManager resourceManager) {
+		this.server = conDetails.getXmppServer();
+		this.username = conDetails.getUsername();
+		this.password = conDetails.getPassword();
+		this.resource = conDetails.getResource();
+		this.resourceManager = resourceManager;
 	}
 
 	/**
@@ -120,6 +120,12 @@ public class XmppManager {
 		}
 	}
 	
+	
+	public boolean isConnected()
+	{
+		return (connection!=null) && (connection.isConnected());
+	}
+	
 	/**
 	 * Create the correctly formated IQ stanza (see http://xmpp.org/extensions/inbox/http-over-xmpp.html) 
 	 * and send it
@@ -151,6 +157,7 @@ public class XmppManager {
 		}
 		int id = reqId.incrementAndGet();
 		try {
+			/**TODO use the timed out version poll**/
 			synchronized(reqMap){
 				reqMap.put(id, request);
 			}
@@ -182,7 +189,13 @@ public class XmppManager {
 			throw new XmppException("Destination " + dest +" not available");
 		}
 		
-		return request.getResponse();
+		HTTPResponse response = request.getResponse();
+		
+		if(response.getStatusCode() == 404){
+			throw new XmppException("404 - Resource not foud on server.");
+		}
+		
+		return response;
 	}
 	
 	
@@ -217,11 +230,12 @@ public class XmppManager {
 	 * @param packet
 	 */
 	private void handleRequest(Packet packet){
+		System.out.println("Handle reques");
 		IQHTTPReq iqReq = (IQHTTPReq) packet;
 		if(iqReq.getError() != null){
 			handleRequestError(iqReq);
 		}
-		HTTPResponse res = this.requestListener.onRequestReceived(iqReq.getHttpRequest());
+		HTTPResponse res = RequestHandler.handleRequest(iqReq.getHttpRequest(), resourceManager);
 		this.sendResponse(res, iqReq.getFrom(), iqReq.getPacketID());
 	}
 	

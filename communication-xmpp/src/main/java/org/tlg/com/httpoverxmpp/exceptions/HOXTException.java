@@ -1,13 +1,13 @@
 package org.tlg.com.httpoverxmpp.exceptions;
 
-public class XmppException extends Exception {
+public class HOXTException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	public XmppException(){
+	public HOXTException(){
 	}
 	
-	public XmppException(String message){
+	public HOXTException(String message){
 		super(message);
 	}
 }

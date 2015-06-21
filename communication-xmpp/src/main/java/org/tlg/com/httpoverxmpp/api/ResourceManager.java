@@ -15,8 +15,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
+import org.jivesoftware.smackx.hoxt.packet.HttpMethod;
 import org.reflections.Reflections;
-import org.tlg.com.api.MethodType;
 
 public class ResourceManager {
 
@@ -55,7 +55,7 @@ public class ResourceManager {
 		Map<String, Resource> tmpResources = new HashMap<String, Resource>();
 		for (Method method : c.getMethods()) {
 			if (method.getAnnotations() != null) {
-				List<MethodType> types = new ArrayList<MethodType>();
+				List<HttpMethod> types = new ArrayList<HttpMethod>();
 				Resource tmpResource = r;
 				for (Annotation a : method.getAnnotations()) {
 					if (a instanceof Path) {
@@ -66,19 +66,19 @@ public class ResourceManager {
 							tmpResource = tmpResources.get(r.getUrl() + ((Path) a).value());
 						}
 					} else if (a instanceof GET) {
-						types.add(MethodType.GET);
+						types.add(HttpMethod.GET);
 					} else if (a instanceof PUT) {
-						types.add(MethodType.PUT);
+						types.add(HttpMethod.PUT);
 					} else if (a instanceof POST) {
-						types.add(MethodType.POST);
+						types.add(HttpMethod.POST);
 					} else if (a instanceof DELETE) {
-						types.add(MethodType.DELETE);
+						types.add(HttpMethod.DELETE);
 					} else if (a instanceof HEAD) {
-						types.add(MethodType.HEAD);
+						types.add(HttpMethod.HEAD);
 					}
 				}
 				if (!types.isEmpty()) {
-					for (MethodType type : types) {
+					for (HttpMethod type : types) {
 						tmpResource.setMethod(type, method);
 					}
 					tmpResources.put(tmpResource.getUrl(), tmpResource);

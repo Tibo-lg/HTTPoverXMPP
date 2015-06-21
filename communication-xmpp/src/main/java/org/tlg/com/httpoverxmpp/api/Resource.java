@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.glassfish.jersey.uri.UriTemplate;
-import org.tlg.com.api.MethodType;
+import org.jivesoftware.smackx.hoxt.packet.HttpMethod;
 
 public class Resource {
 	String url;
@@ -20,7 +20,7 @@ public class Resource {
 		this.inst = inst;
 		this.url = url;
 		this.uriTemplate = new UriTemplate(url);
-		methods = new Method[MethodType.values().length];
+		methods = new Method[HttpMethod.values().length];
 	}
 	
 	public Object getInst() {
@@ -51,7 +51,7 @@ public class Resource {
 		return methods;
 	}
 
-	public void setMethod(MethodType type, Method method){
+	public void setMethod(HttpMethod type, Method method){
 		 methods[type.ordinal()] = method;
 	}
 	

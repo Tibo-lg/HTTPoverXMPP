@@ -10,19 +10,29 @@
 	<name>Communication XMPP</name>
 	<dependencies>
 		<dependency>
-			<groupId>org.tlg.com</groupId>
-			<artifactId>communication-common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>org.igniterealtime.smack</groupId>
+			<artifactId>smack-java7</artifactId>
+			<version>4.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.igniterealtime.smack</groupId>
-			<artifactId>smack</artifactId>
-			<version>3.2.1</version>
+			<artifactId>smack-tcp</artifactId>
+			<version>4.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.igniterealtime.smack</groupId>
-			<artifactId>smackx</artifactId>
-			<version>3.2.1</version>
+			<artifactId>smack-im</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.igniterealtime.smack</groupId>
+			<artifactId>smack-extensions</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.igniterealtime.smack</groupId>
+			<artifactId>smack-experimental</artifactId>
+			<version>4.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.reflections</groupId>
@@ -33,6 +43,11 @@
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>2.18</version>
 		</dependency>
 	</dependencies>
 </project>

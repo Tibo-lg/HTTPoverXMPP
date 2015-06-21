@@ -9,28 +9,29 @@ import java.util.Map;
 import javax.ws.rs.PathParam;
 import javax.xml.bind.JAXBException;
 
-import org.tlg.com.http.HTTPRequest;
-import org.tlg.com.http.HTTPResponse;
+import org.jivesoftware.smack.packet.NamedElement;
+import org.jivesoftware.smackx.hoxt.packet.AbstractHttpOverXmpp;
+import org.jivesoftware.smackx.hoxt.packet.HttpOverXmppReq;
+import org.jivesoftware.smackx.hoxt.packet.HttpOverXmppResp;
+import org.tlg.com.httpoverxmpp.util.HOXTUtil;
 
 public final class RequestHandler {
 
 	private RequestHandler() {
 	}
 
-	public static HTTPResponse handleRequest(HTTPRequest request,
+	public static HttpOverXmppResp handleRequest(HttpOverXmppReq request,
 			ResourceManager rm) {
-		HTTPResponse response = new HTTPResponse();
-		String uri = request.getUri();
+		HttpOverXmppResp response = new HttpOverXmppResp();
+		String uri = request.getResource();
 		Map<String, String> params = new HashMap<String, String>();
 		Resource r = rm.getResourceMatch(uri, params);
 		if (r == null) {
-			response.setStatusCode(404);
-			return response;
+			return HOXTUtil.set404(response);
 		}
-		Method method = r.methods[request.getMethodType().ordinal()];
+		Method method = r.methods[request.getMethod().ordinal()];
 		if (method == null) {
-			response.setStatusCode(405);
-			return response;
+			return HOXTUtil.set405(response);
 		}
 		method.setAccessible(true);
 		Object ret = null;
@@ -42,32 +43,28 @@ public final class RequestHandler {
 			}else{
 				ret = invokeMethod(null, method, params, request);
 			}
-			if (ret != null && ret.getClass() != Integer.class) {
-				response.setEntity(ret.getClass(), ret);
+			if (ret != null && ret.getClass() != Integer.class && ret.getClass() != String.class) {
+				response.setData(HOXTUtil.getDataFromObject(ret.getClass(), ret));
+			}else if(ret.getClass() == String.class){
+				AbstractHttpOverXmpp.Text child = new AbstractHttpOverXmpp.Text((String)ret);
+				AbstractHttpOverXmpp.Data data = new AbstractHttpOverXmpp.Data(child);
+				response.setData(data);
 			}
-		} catch (InstantiationException | IllegalAccessException
-				| JAXBException | IllegalArgumentException
-				| InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			response.setStatusCode(500);
-			return response;
+		} catch (JAXBException e) {
+			return HOXTUtil.set500(response);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception!!!");
-			System.out.println(e.toString());
+			return HOXTUtil.set500(response);
 		}
 		response.setStatusCode(200);
 		return response;
 	}
 
 	private static Object invokeMethod(Object inst, Method method,
-			Map<String, String> params, HTTPRequest request)
+			Map<String, String> params, HttpOverXmppReq request)
 			throws InstantiationException, IllegalAccessException,
 			JAXBException, IllegalArgumentException, InvocationTargetException {
 		if (inst == null) {
-			System.out.println(method.getDeclaringClass());
-			System.out.println(method.getName());
 			inst = method.getDeclaringClass().newInstance();
 		}
 		Annotation annotations[][] = method.getParameterAnnotations();
@@ -85,7 +82,14 @@ public final class RequestHandler {
 				}
 			}
 			if (args[i] == null) {
-				args[i] = request.getEntity(types[i]);
+				NamedElement child = request.getData().getChild();
+				if (child instanceof AbstractHttpOverXmpp.Xml) {
+	                args[i] = HOXTUtil.getEntity(((AbstractHttpOverXmpp.Xml) child).getText(), types[i]);
+	            } else if(child instanceof AbstractHttpOverXmpp.Text){
+	            	args[i] = ((AbstractHttpOverXmpp.Text) child).getText();
+	            }else {
+	                // process other AbstractHttpOverXmpp.DataChild subtypes
+	            }
 			}
 		}
 		return method.invoke(inst, args);

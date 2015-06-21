@@ -40,7 +40,7 @@ import org.tlg.com.httpoverxmpp.util.HOXTUtil;
 public class HOXTClient {
 	
 	/*The server Jid */
-	public final static String serverJid = "test-server@delling/t";
+	public final static String serverJid = "test-server@yourservice/t";
 	
 	public static void main(String[] args) throws XmppStringprepException,
 			InterruptedException {

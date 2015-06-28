@@ -20,7 +20,6 @@ public final class HOXTUtil {
 			m.setProperty(Marshaller.JAXB_FRAGMENT, true);
 			StringWriter writer = new StringWriter();
 			m.marshal(entity, writer);
-			System.out.println("Test: " + writer.toString());
 			AbstractHttpOverXmpp.Xml child = new AbstractHttpOverXmpp.Xml(writer.toString());
 			AbstractHttpOverXmpp.Data data = new AbstractHttpOverXmpp.Data(child);
 			return data;
@@ -34,24 +33,26 @@ public final class HOXTUtil {
 		return (T) u.unmarshal(reader);
 	}
 	
-	public static HttpOverXmppResp setStatus(HttpOverXmppResp response, String text, int code){
-		response.setStatusCode(code);
+	public static HttpOverXmppResp setStatus(String text, int code){
 		AbstractHttpOverXmpp.Text child = new AbstractHttpOverXmpp.Text(text);
 		AbstractHttpOverXmpp.Data data = new AbstractHttpOverXmpp.Data(child);
-		response.setData(data);
-		return response;
+
+		return HttpOverXmppResp.builder()
+				.setStatusCode(code)
+				.setData(data)
+				.build();
 	}
 	
-	public static HttpOverXmppResp set404(HttpOverXmppResp response){
+	public static HttpOverXmppResp set404(){
 		
-		return setStatus(response, "Not Found", 404);
+		return setStatus("Not Found", 404);
 	}
 	
-	public static HttpOverXmppResp set405(HttpOverXmppResp response){
-		return setStatus(response, "Method Not Allowed", 405);
+	public static HttpOverXmppResp set405(){
+		return setStatus("Method Not Allowed", 405);
 	}
 	
-	public static HttpOverXmppResp set500(HttpOverXmppResp response){
-		return setStatus(response, "Internal Server Error", 500);
+	public static HttpOverXmppResp set500(){
+		return setStatus("Internal Server Error", 500);
 	}
 }

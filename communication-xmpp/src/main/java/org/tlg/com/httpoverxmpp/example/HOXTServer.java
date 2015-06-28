@@ -6,9 +6,10 @@ import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
-import org.tlg.com.httpoverxmpp.api.ResourceManager;
 import org.tlg.com.httpoverxmpp.api.HOXTWrapper;
+import org.tlg.com.httpoverxmpp.api.ResourceManager;
 
 /**
  * HOXT Client example
@@ -25,9 +26,13 @@ import org.tlg.com.httpoverxmpp.api.HOXTWrapper;
 
 public class HOXTServer {
 	public static void main(String[] args) throws XmppStringprepException {
-		/* Assumes the truststore is in modulefolder/resources */
-		System.setProperty("javax.net.ssl.trustStore",
-				"resources/clientstore.jks");
+		/*
+		 * Assumes the truststore is in "modulefolder/resources" You can either
+		 * use VM argument -Djavax.net.ssl.trustStore=resources/clientstore.jks
+		 * or the following lines
+		 */
+		// System.setProperty("javax.net.ssl.trustStore",
+		// "resources/clientstore.jks");
 		/*
 		 * Create a ResourceManager using a package name. All classes annotated
 		 * with @Path will be available.
@@ -41,9 +46,8 @@ public class HOXTServer {
 		XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration
 				.builder()
 				.setUsernameAndPassword("test-server", "test")
-				.setServiceName("yourservice")
-				// .setXmppDomain(JidCreate.domainBareFrom("yourservice.domain.com"))
-				.setHost("yourservice.domain.com").setCompressionEnabled(false)
+				 .setXmppDomain(JidCreate.domainBareFrom("service"))
+				.setHost("service.com").setCompressionEnabled(false)
 				.setResource("t").setSecurityMode(SecurityMode.required)
 				.build();
 		HOXTWrapper xmppManager = new HOXTWrapper(config, rm);

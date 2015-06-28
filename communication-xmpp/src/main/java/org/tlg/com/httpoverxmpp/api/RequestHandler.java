@@ -22,16 +22,16 @@ public final class RequestHandler {
 
 	public static HttpOverXmppResp handleRequest(HttpOverXmppReq request,
 			ResourceManager rm) {
-		HttpOverXmppResp response = new HttpOverXmppResp();
 		String uri = request.getResource();
 		Map<String, String> params = new HashMap<String, String>();
 		Resource r = rm.getResourceMatch(uri, params);
+		AbstractHttpOverXmpp.Data data = null;
 		if (r == null) {
-			return HOXTUtil.set404(response);
+			return HOXTUtil.set404();
 		}
 		Method method = r.methods[request.getMethod().ordinal()];
 		if (method == null) {
-			return HOXTUtil.set405(response);
+			return HOXTUtil.set405();
 		}
 		method.setAccessible(true);
 		Object ret = null;
@@ -40,24 +40,29 @@ public final class RequestHandler {
 				synchronized (r.getInst()) {
 					ret = invokeMethod(r.getInst(), method, params, request);
 				}
-			}else{
+			} else {
 				ret = invokeMethod(null, method, params, request);
 			}
-			if (ret != null && ret.getClass() != Integer.class && ret.getClass() != String.class) {
-				response.setData(HOXTUtil.getDataFromObject(ret.getClass(), ret));
-			}else if(ret.getClass() == String.class){
-				AbstractHttpOverXmpp.Text child = new AbstractHttpOverXmpp.Text((String)ret);
-				AbstractHttpOverXmpp.Data data = new AbstractHttpOverXmpp.Data(child);
-				response.setData(data);
+						
+			if (ret != null && ret.getClass() != Integer.class
+					&& ret.getClass() != String.class) {
+				data = HOXTUtil.getDataFromObject(ret.getClass(), ret);
+			} else if (ret.getClass() == String.class) {
+				AbstractHttpOverXmpp.Text child = new AbstractHttpOverXmpp.Text(
+						(String) ret);
+				data = new AbstractHttpOverXmpp.Data(
+						child);
 			}
 		} catch (JAXBException e) {
-			return HOXTUtil.set500(response);
+			return HOXTUtil.set500();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return HOXTUtil.set500(response);
+			return HOXTUtil.set500();
 		}
-		response.setStatusCode(200);
-		return response;
+		return HttpOverXmppResp.builder()
+				.setStatusCode(200)
+				.setData(data)
+				.build();
 	}
 
 	private static Object invokeMethod(Object inst, Method method,
@@ -84,12 +89,14 @@ public final class RequestHandler {
 			if (args[i] == null) {
 				NamedElement child = request.getData().getChild();
 				if (child instanceof AbstractHttpOverXmpp.Xml) {
-	                args[i] = HOXTUtil.getEntity(((AbstractHttpOverXmpp.Xml) child).getText(), types[i]);
-	            } else if(child instanceof AbstractHttpOverXmpp.Text){
-	            	args[i] = ((AbstractHttpOverXmpp.Text) child).getText();
-	            }else {
-	                // process other AbstractHttpOverXmpp.DataChild subtypes
-	            }
+					args[i] = HOXTUtil.getEntity(
+							((AbstractHttpOverXmpp.Xml) child).getText(),
+							types[i]);
+				} else if (child instanceof AbstractHttpOverXmpp.Text) {
+					args[i] = ((AbstractHttpOverXmpp.Text) child).getText();
+				} else {
+					// process other AbstractHttpOverXmpp.DataChild subtypes
+				}
 			}
 		}
 		return method.invoke(inst, args);
